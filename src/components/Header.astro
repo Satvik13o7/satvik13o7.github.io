@@ -1,0 +1,13 @@
+---
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+const isHome = path === '/';
+const isBlog = path === '/blog' || path.startsWith('/blog/');
+---
+
+<header class="site-header">
+  <a href="/" class="brand">Satvik</a>
+  <nav>
+    <a href="/" aria-current={isHome ? 'page' : undefined}>About</a>
+    <a href="/blog" aria-current={isBlog ? 'page' : undefined}>Writing</a>
+  </nav>
+</header>

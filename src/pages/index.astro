@@ -1,0 +1,67 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime()
+);
+const recent = posts.slice(0, 4);
+---
+
+<BaseLayout
+  title="Satvik"
+  description="AI Engineer at Ernst & Young. Writing on LLM inference, applied ML, and agent infrastructure."
+>
+  <section class="prose intro">
+    <h1>Satvik</h1>
+    <p class="tagline">AI Engineer at Ernst &amp; Young.</p>
+
+    <p>
+      I work on applied LLM systems at EY. Previously, AI research intern at
+      Research Commons. B.Tech in Electronics and Instrumentation from BITS
+      Pilani, Goa.
+    </p>
+
+    <p>
+      My focus is LLM inference, applied ML, and network systems. Past work
+      includes inference optimization on Mistral&#8209;7B, <em>NetLM</em>
+      &mdash; a foundational model for network telemetry, and <em>mbSTATS</em>,
+      a metabolomics analysis library. Mostly Python and PyTorch. I paint and
+      sketch when I'm away from a keyboard.
+    </p>
+  </section>
+
+  {
+    recent.length > 0 && (
+      <section class="section">
+        <p class="section-label">Writing</p>
+        <ul class="post-list">
+          {recent.map((post) => (
+            <li>
+              <time datetime={post.data.date.toISOString().slice(0, 10)}>
+                {post.data.date.toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'short',
+                  day: 'numeric',
+                })}
+              </time>
+              <span>
+                <a href={`/blog/${post.id}/`}>{post.data.title}</a>
+                <span class="desc">{post.data.description}</span>
+              </span>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
+
+  <section class="section">
+    <p class="section-label">Elsewhere</p>
+    <p class="elsewhere">
+      <a href="https://github.com/Satvik713" rel="me">GitHub</a> &nbsp;·&nbsp;
+      <a href="https://www.linkedin.com/in/satvik-kumar-a45b26226/" rel="me">LinkedIn</a> &nbsp;·&nbsp;
+      <a href="mailto:satvikumar02@gmail.com">Email</a>
+    </p>
+  </section>
+</BaseLayout>
