@@ -31,11 +31,11 @@ And that's assuming the hardware and the data for this kind of training even exi
 
 ## OK so fine-tuning then?
 
-Fine-tuning is partially correct &mdash; but it hits the same hardware wall immediately. Hundreds of GBs of VRAM for KV cache and backprop activations for 1M-length sequences.
+Fine-tuning is partially correct - but it hits the same hardware wall immediately. Hundreds of GBs of VRAM for KV cache and backprop activations for 1M-length sequences.
 
 But even if you somehow solved the hardware problem, fine-tuning has a deeper issue: **position is baked into the weights.**
 
-During pre-training the model never saw a token beyond position 8192. Its weights learned to interpret a specific range of positional signals. At position 500K, the model isn't just guessing &mdash; it's like asking someone to read a clock that suddenly has 50,000 hours on it instead of 12. The hands are pointing somewhere completely unfamiliar and the intuition for reading clocks is suddenly useless.
+During pre-training the model never saw a token beyond position 8192. Its weights learned to interpret a specific range of positional signals. At position 500K, the model isn't just guessing - it's like asking someone to read a clock that suddenly has 50,000 hours on it instead of 12. The hands are pointing somewhere completely unfamiliar and the intuition for reading clocks is suddenly useless.
 
 Fine-tuning can't cleanly fix this because the same weights that were trained to handle position 5 are now asked to handle position 500K, and updating them to make sense of one actively breaks the other.
 
@@ -47,9 +47,9 @@ So before we get to the actual solution, we need to understand how models encode
 
 Transformers process all tokens simultaneously. There's no inherent sense of order.
 
-(There's a camp that claims models can develop an understanding of position without being explicitly shown it, and they're not completely wrong &mdash; but for pure transformer-based models, we need to be explicit.)
+(There's a camp that claims models can develop an understanding of position without being explicitly shown it, and they're not completely wrong - but for pure transformer-based models, we need to be explicit.)
 
-The solution is **positional embeddings** &mdash; a vector added to each token's representation encoding where it sits in the sequence.
+The solution is **positional embeddings** - a vector added to each token's representation encoding where it sits in the sequence.
 
 What do we need from positional encoding? A unique fingerprint for every position. So we need some function that produces a different value for every position number we plug into it.
 
@@ -79,17 +79,17 @@ Bounded between 0 and 1, but something else is broken. During training at length
 
 **The actual problem: it's the scalar.**
 
-We're trying to encode position as a single number and asking it to do everything at once &mdash; be unique, be bounded, encode relative distance. That's too much to ask from one number.
+We're trying to encode position as a single number and asking it to do everything at once - be unique, be bounded, encode relative distance. That's too much to ask from one number.
 
 ---
 
 ## Give each position a vector
 
-Position 1 → `[?, ?, ?, ..., ?]` &mdash; 512 numbers, each capturing something different.
+Position 1 → `[?, ?, ?, ..., ?]` - 512 numbers, each capturing something different.
 
 We need a function that generates these 512 numbers for any given position. First property required: **bounded**. How about sine and cosine?
 
-They're bounded, deterministic, and generalisable. But they repeat every 2π ≈ 6.28 positions &mdash; they're not unique at all.
+They're bounded, deterministic, and generalisable. But they repeat every 2π ≈ 6.28 positions - they're not unique at all.
 
 The fix: use many sine and cosine waves at **different speeds simultaneously**. Make the value inside each sin/cos travel from 0 to 2π at different speeds.
 
@@ -104,7 +104,7 @@ Position 1 → [sin(1), sin(1), sin(1), ..., sin(1)]
 Position 2 → [sin(2), sin(2), sin(2), ..., sin(2)]
 ```
 
-But these still aren't unique &mdash; it's the same scalar problem, just repeated 512 times. Position 1 and position 7 get nearly identical values.
+But these still aren't unique - it's the same scalar problem, just repeated 512 times. Position 1 and position 7 get nearly identical values.
 
 We need different values across dimensions at the same position. The solution: **use different frequencies so the same wave moves differently across dimensions.**
 
@@ -130,7 +130,7 @@ dim 2i   = sin(pos / 10000^(2i/d_model))
 dim 2i+1 = cos(pos / 10000^(2i/d_model))
 ```
 
-Why linearly spaced frequencies don't work: you'd have 200+ pairs bunched between 0.1 and 0.9, all medium speed, barely different from each other. Instead, space them exponentially &mdash; each pair proportionally slower than the last, covering a wide range.
+Why linearly spaced frequencies don't work: you'd have 200+ pairs bunched between 0.1 and 0.9, all medium speed, barely different from each other. Instead, space them exponentially - each pair proportionally slower than the last, covering a wide range.
 
 The original paper chose frequencies so that:
 - The fastest pair completes a cycle every ~6 positions.
@@ -147,7 +147,7 @@ When you add a position vector to the token embedding, the two get entangled int
 
 **2. The generalisation problem**
 
-The model trained on positions 0 to 8192. For each position it learned a specific sinusoidal fingerprint and the attention patterns that go with it. At inference time position 10000 arrives &mdash; a fingerprint that never appeared during training. Sin and cos are smooth functions so you can mathematically extrapolate them, but the model's weights weren't trained for that region and performance degrades.
+The model trained on positions 0 to 8192. For each position it learned a specific sinusoidal fingerprint and the attention patterns that go with it. At inference time position 10000 arrives - a fingerprint that never appeared during training. Sin and cos are smooth functions so you can mathematically extrapolate them, but the model's weights weren't trained for that region and performance degrades.
 
 **3. The relative distance problem**
 
@@ -187,7 +187,7 @@ Position 2 → rotate by 2·θ
 Position n → rotate by n·θ
 ```
 
-The same "cat" token at position 3 gets rotated by 3θ; at position 7 it gets rotated by 7θ. The meaning is preserved &mdash; just pointing in a different direction depending on position.
+The same "cat" token at position 3 gets rotated by 3θ; at position 7 it gets rotated by 7θ. The meaning is preserved - just pointing in a different direction depending on position.
 
 **The magic is in attention**
 
@@ -196,13 +196,13 @@ Attention computes a score between tokens as `score = Q · K`. With RoPE:
 - Q of a token at position m is rotated by angle m.
 - K of a token at position n is rotated by angle n.
 
-The geometric property of dot products: the result depends not on the individual angles m and n, but only on their **difference** (m − n). So when attention computes Q · K, the result reflects how far apart the two tokens are &mdash; not where they individually are. **Relative distance is guaranteed by geometry, not learned by the model.**
+The geometric property of dot products: the result depends not on the individual angles m and n, but only on their **difference** (m − n). So when attention computes Q · K, the result reflects how far apart the two tokens are - not where they individually are. **Relative distance is guaranteed by geometry, not learned by the model.**
 
 This also fixes the mixing problem: position is encoded in the *direction* of the vector, not mixed into its *values*.
 
 **Scaling to 512 dimensions**
 
-You can't rotate a 512D vector the same way you rotate a 2D one. RoPE handles this by splitting the 512 dimensions into 256 pairs and rotating each pair independently &mdash; each pair has its own 2D plane:
+You can't rotate a 512D vector the same way you rotate a 2D one. RoPE handles this by splitting the 512 dimensions into 256 pairs and rotating each pair independently - each pair has its own 2D plane:
 
 ```
 [dim 0,   dim 1]   → rotate by position × freq_0
@@ -230,9 +230,9 @@ Do this for all 256 pairs. That's RoPE.
 
 ---
 
-## Why RoPE extrapolates better &mdash; but still breaks
+## Why RoPE extrapolates better - but still breaks
 
-The sinusoidal problem was showing an unfamiliar absolute fingerprint at position 10000. RoPE doesn't show absolute fingerprints anymore &mdash; it shows relative ones. A gap of 50 looks the same whether it occurs at position 100 or position 10000. The model has seen many gap sizes across many different absolute positions during training.
+The sinusoidal problem was showing an unfamiliar absolute fingerprint at position 10000. RoPE doesn't show absolute fingerprints anymore - it shows relative ones. A gap of 50 looks the same whether it occurs at position 100 or position 10000. The model has seen many gap sizes across many different absolute positions during training.
 
 But it still breaks, specifically for the **slow-rotating pairs**.
 
@@ -273,7 +273,7 @@ Scale the frequency down by 32:
 new angle = 145° / 32 = 4.5°   ← well within training range
 ```
 
-You can't slow down all pairs though &mdash; the fast ones are fine, and slowing them would break nearby-position distinctions. You need to be selective: aggressive scaling on slow pairs, minimal or zero scaling on fast pairs.
+You can't slow down all pairs though - the fast ones are fine, and slowing them would break nearby-position distinctions. You need to be selective: aggressive scaling on slow pairs, minimal or zero scaling on fast pairs.
 
 ---
 
@@ -283,17 +283,17 @@ You've fixed the angle problem mathematically. But the model's weights were stil
 
 The actual production recipe is three things together:
 
-1. **RoPE scaling** &mdash; fix the angle distribution so far-out positions look familiar
-2. **Short continued retraining** &mdash; let the weights adjust to long-range dependencies
-3. **Carefully curated long-context data** &mdash; documents that actually require long-range understanding
+1. **RoPE scaling** - fix the angle distribution so far-out positions look familiar
+2. **Short continued retraining** - let the weights adjust to long-range dependencies
+3. **Carefully curated long-context data** - documents that actually require long-range understanding
 
-This is how Llama 3 went from 8K to 128K &mdash; not one big training run, but staged extension. RoPE scaling plus weight updates at each stage, using 800 billion tokens in total for the extension phase alone.
+This is how Llama 3 went from 8K to 128K - not one big training run, but staged extension. RoPE scaling plus weight updates at each stage, using 800 billion tokens in total for the extension phase alone.
 
 ---
 
 ## Then Cerebras showed it was wasteful
 
-Meta used 800 billion tokens to extend Llama 3 to 128K context. Cerebras came along and showed the same performance was achievable with under 10 billion tokens &mdash; using smarter synthetic data generation, position ID shifting, and better RoPE base frequency tuning.
+Meta used 800 billion tokens to extend Llama 3 to 128K context. Cerebras came along and showed the same performance was achievable with under 10 billion tokens - using smarter synthetic data generation, position ID shifting, and better RoPE base frequency tuning.
 
 That's 80x cheaper.
 
