@@ -1,4 +1,6 @@
 import { defineConfig } from 'astro/config';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
 
 // If you deploy to https://<username>.github.io/  -> leave `base` unset.
 // If you deploy to https://<username>.github.io/<repo>/  -> set base to '/<repo>/'.
@@ -10,6 +12,8 @@ export default defineConfig({
       theme: 'github-light',
       wrap: true,
     },
+    remarkPlugins: [remarkMath],
+    rehypePlugins: [rehypeKatex],
   },
   build: {
     format: 'directory',

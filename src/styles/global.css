@@ -17,6 +17,9 @@
   --max-w-wide: 680px;
 }
 
+/* KaTeX styles for rendered math */
+@import "katex/dist/katex.min.css";
+
 *,
 *::before,
 *::after {
