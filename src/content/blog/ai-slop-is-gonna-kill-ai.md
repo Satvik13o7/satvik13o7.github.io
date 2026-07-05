@@ -49,7 +49,7 @@ So basically using these power law relations you can predict what combination of
 
 One thing that suprised me was the fact that the number of AI generated articles on the internet has surpassed that of human written. And I guess that might be the case in other domains as well - especially coding.
 
-![Illustration showing the growing fraction of AI-generated content on the web](image.png)
+![Illustration showing the growing fraction of AI-generated content on the web](/assets/ai-slop/blog_distribution_shift.png)
 
 Now why do we care about this? Why do we care for the amount of AI slop that is there on the internet? 
 
@@ -82,7 +82,7 @@ So the repeated training on recursively generated data disproportionately erodes
 
 Below is an example which shows the degradation in performance of a model recursively trained on the data it generated itself.
 
-![Example: recursive-generation degradation (gen0 vs later generation sample)](image-1.png)
+![Example: recursive-generation degradation (gen0 vs later generation sample)](/assets/ai-slop/blog_perplexity_drift.png)
 
 
 ## The Experiments 
@@ -130,11 +130,11 @@ Below is an example which shows the degradation in performance of a model recurs
 
 <div style="display:flex;gap:1rem;align-items:flex-start">
   <figure style="flex:1;margin:0">
-    <img src="runs/blog_perplexity_drift.png" alt="Median perplexity by generation with shaded p10–p90 band; median rises from 1.39 (gen0) to 2.01 (gen6) and spread increases">
+    <img src="/assets/ai-slop/blog_perplexity_drift.png" alt="Median perplexity by generation with shaded p10–p90 band; median rises from 1.39 (gen0) to 2.01 (gen6) and spread increases">
     <figcaption>Perplexity drift (median with p10–p90 band).</figcaption>
   </figure>
   <figure style="flex:1;margin:0">
-    <img src="runs/blog_distribution_shift.png" alt="Overlaid histograms of per-sample perplexity for gen0 and gen6 showing a rightward shift of the distribution">
+    <img src="/assets/ai-slop/blog_distribution_shift.png" alt="Overlaid histograms of per-sample perplexity for gen0 and gen6 showing a rightward shift of the distribution">
     <figcaption>Distribution shift: gen0 vs gen6.</figcaption>
   </figure>
 </div>
@@ -150,14 +150,14 @@ Variance increases strongly (0.029 → 0.151, ≈×5), which shows the failure m
 
 Parse rate falls slowly (≈94.7% → 85.6%), showing syntax remains relatively robust while semantics/quality degrade; a declining parse rate means more generated programs become syntactically invalid over generations.
 
-![Line chart of parse rate by generation showing a gradual downward trend](runs/blog_parse_rate.png)
+![Line chart of parse rate by generation showing a gradual downward trend](/assets/ai-slop/blog_parse_rate.png)
 
 
 ### MMD (Maximum Mean Discrepancy)
 
 MMD measures how far the generation embeddings drift from gen‑0 in embedding space; an increasing MMD means the semantic distribution of generated programs moves away from the original distribution.
 
-![Bar/line chart of MMD by generation rising from zero at gen0 to higher values by later generations](results/plots/mmd.png)
+![Bar/line chart of MMD by generation rising from zero at gen0 to higher values by later generations](/assets/ai-slop/mmd.png)
 
 
 ### Tail collapse (rare feature metrics)
@@ -166,11 +166,11 @@ Rare-feature metrics track whether features that were rare in gen‑0 (bottom 10
 
 <div style="display:flex;gap:1rem;align-items:flex-start">
   <figure style="flex:1;margin:0">
-    <img src="results/plots/tail_missing.png" alt="Count of gen-0 rare AST features missing entirely by generation; number rises across generations">
+    <img src="/assets/ai-slop/tail_missing.png" alt="Count of gen-0 rare AST features missing entirely by generation; number rises across generations">
     <figcaption>Missing gen‑0 rare features by generation.</figcaption>
   </figure>
   <figure style="flex:1;margin:0">
-    <img src="results/plots/tail_rare_frequency.png" alt="Total occurrences / mean frequency of gen-0 rare features decreasing across generations">
+    <img src="/assets/ai-slop/tail_rare_frequency.png" alt="Total occurrences / mean frequency of gen-0 rare features decreasing across generations">
     <figcaption>Frequency of gen‑0 rare features by generation.</figcaption>
   </figure>
 </div>
@@ -181,7 +181,7 @@ Rare-feature metrics track whether features that were rare in gen‑0 (bottom 10
 TwoNN intrinsic-dimension estimates how many effective semantic degrees of freedom the embeddings occupy; a drop (≈17.1 → 13.4) means later generations occupy a lower-dimensional subspace - outputs become less varied semantically.
 
 <figure>
-  <img src="results/plots/intrinsic_dimension.png" alt="Estimated intrinsic dimension (TwoNN) of generation embeddings decreasing from ~17.1 to ~13.4 across generations">
+  <img src="/assets/ai-slop/intrinsic_dimension.png" alt="Estimated intrinsic dimension (TwoNN) of generation embeddings decreasing from ~17.1 to ~13.4 across generations">
   <figcaption>Intrinsic-dimension (TwoNN) by generation.</figcaption>
 </figure>
 
@@ -192,11 +192,11 @@ Strong correlations (e.g, mean PPL vs MMD r≈0.99, mean PPL vs rare-feature fre
 
 <div style="display:flex;gap:1rem;align-items:flex-start">
   <figure style="flex:1;margin:0">
-    <img src="results/plots/scatter_ppl_vs_mmd.png" alt="Scatter of mean perplexity vs MMD with fitted trend line showing strong positive correlation">
+    <img src="/assets/ai-slop/scatter_ppl_vs_mmd.png" alt="Scatter of mean perplexity vs MMD with fitted trend line showing strong positive correlation">
     <figcaption>Mean PPL vs MMD.</figcaption>
   </figure>
   <figure style="flex:1;margin:0">
-    <img src="results/plots/scatter_ppl_vs_idim.png" alt="Scatter of mean perplexity vs intrinsic dimension with fitted trend line showing strong negative correlation">
+    <img src="/assets/ai-slop/scatter_ppl_vs_idim.png" alt="Scatter of mean perplexity vs intrinsic dimension with fitted trend line showing strong negative correlation">
     <figcaption>Mean PPL vs intrinsic dimension.</figcaption>
   </figure>
 </div>
