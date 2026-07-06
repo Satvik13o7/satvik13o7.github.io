@@ -1,4 +1,4 @@
-:@import "katex/dist/katex.min.css";
+@import "katex/dist/katex.min.css";
 
 /* Ensure KaTeX's MathML/annotation fallback is hidden.
    Some renderers include a MathML <annotation> fallback that should be
