@@ -1,19 +1,22 @@
 ---
 title: "AI Slop is gonna kill AI! Stop!!"
-description: "Draft post on data distribution drift and recursive self-training in code models."
+description: "How AI slop is polluting training data: recursive self‑training causes semantic drift, tail collapse and manifold contraction-leading to model degradation."
 date: 2026-07-06
 draft: false
 ---
 
+The motivation for the experiment performed in this blog post comes from - *"Chasing Shadows: Pitfalls in LLM Security Research"* (arXiv:2512.09549)
+
 ## AI Slop is gonna kill AI! Stop!! 
 
-Let me set the premise for what I am about to explain - so there is a lot of buzz around AI replacing human workers, for instance software engineers. But we know pretty well that the current AI systems that we have are not good enough to actually replace software engineers (well at least the good ones) and the whole reason why companies like Anthropic are worth trillions of dollars is because the bet is on future - that there will be a time the models will be good enough to replace us. There are already two camps of people - one which claim that the LLMs are the way to AGI and mass unemployment (and these people are mostly doing fearmongering to make money) and the other camp which believes that the LLMs are not it and we would need some other form of machine learning to achieve AGI and I am here to explain why the second camp might be more logical and correct. 
+Let me set the premise here for what I am about to explain - so there is a lot of buzz around AI replacing human workers, for instance software engineers. But we know pretty well that the current AI systems we have are not good enough to actually replace software engineers (well at least the good ones) and the whole reason why companies like Anthropic are worth trillions of dollars is because the bet is on the future - that there will be a time the models will be good enough to replace us. There are already two camps of people - one which claim that the LLMs are the way to AGI and mass unemployment (and these people are mostly doing fearmongering to make money) and the other camp which believes that the LLMs are not it and we would need some other form of machine learning to achieve AGI and I am here to explain why the second camp might be more logical and correct. 
 
 ### The philosophical perspective 
 
-An American philosopher in his book C.S. Lewis's Dangerous Idea writes the following paragraph's (20 years before the advent of LLMs) - 
+An American philosopher Victor Reppert in his book C.S. Lewis's Dangerous Idea writes the following paragraph's (20 years before the advent of LLMs) - 
 
 "If you were to meet a person, call him Steve, who could argue with great cogency for every position he held, you might on that account be inclined to consider him a very rational person." 
+
 "But suppose it turned out that on all disputed questions Steve rolled dice to fix his positions permanently and then used his reasoning abilities only to generate the best available arguements for those beliefs selected in the above-mentioned random method. I think that such a discovery would prompt you to withdraw from him the honorific title 'rational'." 
 
 Now, if you have even a little idea of how LLMs work you would easily be able to correlate the above description with the 'reasoning' in LLMs.
@@ -49,7 +52,7 @@ So basically using these power law relations you can predict what combination of
 
 One thing that suprised me was the fact that the number of AI generated articles on the internet has surpassed that of human written. And I guess that might be the case in other domains as well - especially coding.
 
-![Illustration showing the growing fraction of AI-generated content on the web](/assets/ai-slop/blog_distribution_shift.png)
+![Illustration showing the growing fraction of AI-generated content on the web](public/assets/ai-slop/number_of_ai_articles.png)
 
 Now why do we care about this? Why do we care for the amount of AI slop that is there on the internet? 
 
@@ -57,18 +60,18 @@ Now why do we care about this? Why do we care for the amount of AI slop that is 
 
 Let's say the vocabulary of my training data is 1000 and the dimension I am using to encode these is also 1000 - and this basically means that every thing in my training data lives in this 1 million dimensional space. But does this mean that if you sample any random point from this 1M-dimensional space you would get something meaningful? the answer is NO! it will be a random noise. Only a subset of points from this 1M-dimensional space would actually mean something. 
 
-Ok let me explain with an even simple example - 
+Ok let me explain with a simple example - 
 
 Consider a sheet of paper - the sheet exists in 3 dimensions (howsoever small is the third dimension), but moving on the sheet only requires 2 coordinates. 
 
 So, 
 
-    - while the ambient dimension of the paper is = 3 
-    - its intrinsic dimension is = 2 
+    - while the ambient dimension of the paper = 3 
+    - its intrinsic dimension = 2 
 
 And exactly the same idea applies to our natural language data. Natural language lives in a ridiculously high dimensional space but the meaningful language lives in far fewer dimensions and these might roughly correspond to things like - syntax, semantics, style, factual content, topics etc. 
 
-The intrinsic dimension is the minimum number of latent variables needed to describe the data distribution. And the LLMs task is to learn this manifold lying in that high dimensional space as smoothly as possible. In that manifold or the data distribution there are both types of things - common and rare and since the LLM sees the common ones in higher numbers it learns that part of the manifold way more smoothly than the part which consists of rare things.
+The intrinsic dimension is the minimum number of latent variables needed to describe the data distribution. And the LLMs task is to learn this manifold lying in that high dimensional space as smoothly as possible. In that manifold or the data distribution there are both types of things - common and rare and since the LLM sees the common ones in higher numbers it learns that part of the manifold way more smoothly than the part which consists of rarer things.
 
 ### The AI Slop and the eventual Model Collapse 
 
@@ -82,7 +85,20 @@ So the repeated training on recursively generated data disproportionately erodes
 
 Below is an example which shows the degradation in performance of a model recursively trained on the data it generated itself.
 
-![Example: recursive-generation degradation (gen0 vs later generation sample)](/assets/ai-slop/blog_perplexity_drift.png)
+<div style="display:flex;gap:1rem;align-items:flex-start">
+  <figure style="flex:1;margin:0">
+    <img src="/assets/ai-slop/blog_distribution_shift.png"
+         alt="Overlaid histograms of per-sample perplexity for gen0 and gen6 showing a rightward shift of the distribution"
+         style="width:100%;height:auto">
+    <figcaption>Distribution shift: gen0 vs gen6.</figcaption>
+  </figure>
+  <figure style="flex:1;margin:0">
+    <img src="/assets/ai-slop/blog_perplexity_drift.png"
+         alt="Median perplexity by generation with shaded p10–p90 band"
+         style="width:100%;height:auto">
+    <figcaption>Perplexity drift (median with p10–p90 band).</figcaption>
+  </figure>
+</div>
 
 
 ## The Experiments 
