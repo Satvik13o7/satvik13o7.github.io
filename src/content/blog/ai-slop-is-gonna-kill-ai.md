@@ -52,7 +52,7 @@ So basically using these power law relations you can predict what combination of
 
 One thing that suprised me was the fact that the number of AI generated articles on the internet has surpassed that of human written. And I guess that might be the case in other domains as well - especially coding.
 
-![Illustration showing the growing fraction of AI-generated content on the web](public/assets/ai-slop/number_of_ai_articles.png)
+![Illustration showing the growing fraction of AI-generated content on the web](/assets/ai-slop/number_of_ai_articles.png)
 
 Now why do we care about this? Why do we care for the amount of AI slop that is there on the internet? 
 
@@ -213,4 +213,4 @@ Ok so there are two things to conclude from this experiment -
 
 1. The most important one being - for the most part AI is reliable and good enough but there will always be some things some obscure things that the model will not get right. And the "always" plays a big role here and requires a human expertise to fill that gap. 
 
-2. It's not like this is not fixable - we are not going to get into that here but there are a bunch of things that researchers are working on to counter this, consider OpenAI's reearch on detecting LLM generated text or you might have recently heard that they are internally tagging the AI generated images from their model. 
+2. It's not like this is not fixable - we are not going to get into that here but there are a bunch of things that researchers are working on to counter this, consider OpenAI's research on detecting LLM generated text or you might have recently heard that they are internally tagging the AI generated images from their model. 
