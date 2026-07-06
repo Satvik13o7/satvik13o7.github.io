@@ -85,20 +85,7 @@ So the repeated training on recursively generated data disproportionately erodes
 
 Below is an example which shows the degradation in performance of a model recursively trained on the data it generated itself.
 
-<div style="display:flex;gap:1rem;align-items:flex-start">
-  <figure style="flex:1;margin:0">
-    <img src="/assets/ai-slop/blog_distribution_shift.png"
-         alt="Overlaid histograms of per-sample perplexity for gen0 and gen6 showing a rightward shift of the distribution"
-         style="width:100%;height:auto">
-    <figcaption>Distribution shift: gen0 vs gen6.</figcaption>
-  </figure>
-  <figure style="flex:1;margin:0">
-    <img src="/assets/ai-slop/blog_perplexity_drift.png"
-         alt="Median perplexity by generation with shaded p10–p90 band"
-         style="width:100%;height:auto">
-    <figcaption>Perplexity drift (median with p10–p90 band).</figcaption>
-  </figure>
-</div>
+![Perplexity drift (median with p10–p90 band)](/assets/ai-slop/blog_perplexity_drift.png)
 
 
 ## The Experiments 
