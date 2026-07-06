@@ -1,12 +1,15 @@
 @import "katex/dist/katex.min.css";
 
-/* Ensure KaTeX's MathML/annotation fallback is hidden.
-   Some renderers include a MathML <annotation> fallback that should be
-   visually hidden; if stylesheet order or bundling exposes it you may
-   see the raw text alongside the rendered equation. Hide it explicitly. */
-.katex .katex-mathml,
-.katex .katex-html {
+/* Ensure KaTeX's MathML <annotation> fallback is hidden while keeping
+   the rendered HTML output visible. Hiding the .katex-html element
+   removes the visible equation; we only want to hide the MathML
+   annotation that sometimes exposes the raw TeX source. */
+.katex .katex-mathml {
   display: none !important;
+}
+.katex .katex-html {
+  /* make sure the rendered HTML is shown */
+  display: inline-block !important;
 }
 
 :root {
