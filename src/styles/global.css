@@ -20,6 +20,14 @@
 /* KaTeX styles for rendered math */
 @import "katex/dist/katex.min.css";
 
+/* Ensure KaTeX's MathML/annotation fallback is hidden.
+   Some renderers include a MathML <annotation> fallback that should be
+   visually hidden; if stylesheet order or bundling exposes it you may
+   see the raw text alongside the rendered equation. Hide it explicitly. */
+.katex .katex-mathml,
+.katex .katex-html {
+  display: none !important;
+}
 *,
 *::before,
 *::after {
